@@ -177,6 +177,12 @@ func (t2s *Tun2Socks) Run() {
 			}
 			t2s.udp(data, &ip, &udp)
 
+		case packet.IPProtocolICMPv4:
+			log.Printf("Unsupported packet: protocol %v", "IPProtocolICMPv4")
+
+		case packet.IPProtocolICMPv6:
+			log.Printf("Unsupported packet: protocol %v", "IPProtocolICMPv6")
+
 		default:
 			// Unsupported packets
 			log.Printf("Unsupported packet: protocol %d", ip.Protocol)

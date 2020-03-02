@@ -12,6 +12,11 @@ import (
 	"github.com/yinghuocho/gotun2socks/tun"
 )
 
+/*
+ route add 0.0.0.0 mask 128.0.0.0 10.0.0.1  添加默认路由
+ route add 128.0.0.0 mask 128.0.0.0 10.0.0.1
+*/
+
 func main() {
 	var tunDevice string
 	var tunAddr string
@@ -48,9 +53,10 @@ func main() {
 		s := <-ch
 		switch s {
 		default:
+			DeleteRoutes("10.168.0.57", tunGW)
 			tun.Stop()
 		}
 	}()
-
+	AddRoutes("10.168.0.57", tunGW)
 	tun.Run()
 }
