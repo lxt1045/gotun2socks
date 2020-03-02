@@ -8,7 +8,7 @@ import (
 )
 
 // AddRoutes adds routes.
-func AddRoutes(proxyIP, gwNew string) error {
+func AddRoutes(proxyIPs []string, gwNew string) error {
 	c := exec.Command("chcp", "65001")
 	c.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 	if out, err := c.CombinedOutput(); err != nil {
@@ -28,15 +28,17 @@ func AddRoutes(proxyIP, gwNew string) error {
 	if err != nil {
 		return err
 	}
-	c = exec.Command("route", "add", proxyIP, "mask", "255.255.255.255", gw, "metric", "1")
-	if out, err := c.CombinedOutput(); err != nil {
-		return errors.New(string(out) + err.Error())
+	for _, proxyIP := range proxyIPs {
+		c = exec.Command("route", "add", proxyIP, "mask", "255.255.255.255", gw, "metric", "1")
+		if out, err := c.CombinedOutput(); err != nil {
+			return errors.New(string(out) + err.Error())
+		}
 	}
 	return nil
 }
 
 // DeleteRoutes deletes routes.
-func DeleteRoutes(proxyIP, gwNew string) error {
+func DeleteRoutes(proxyIPs []string, gwNew string) error {
 	c := exec.Command("chcp", "65001")
 	c.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 	if out, err := c.CombinedOutput(); err != nil {
@@ -56,9 +58,12 @@ func DeleteRoutes(proxyIP, gwNew string) error {
 	if err != nil {
 		return err
 	}
-	c = exec.Command("route", "delete", proxyIP, "mask", "255.255.255.255", gw, "metric", "1")
-	if out, err := c.CombinedOutput(); err != nil {
-		return errors.New(string(out) + err.Error())
+
+	for _, proxyIP := range proxyIPs {
+		c = exec.Command("route", "delete", proxyIP, "mask", "255.255.255.255", gw, "metric", "1")
+		if out, err := c.CombinedOutput(); err != nil {
+			return errors.New(string(out) + err.Error())
+		}
 	}
 	return nil
 }

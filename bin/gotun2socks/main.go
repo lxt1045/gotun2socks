@@ -34,7 +34,12 @@ func main() {
 	flag.StringVar(&localSocksAddr, "local-socks-addr", "127.0.0.1:1080", "local SOCKS proxy address")
 	flag.BoolVar(&publicOnly, "public-only", false, "only forward packets with public address destination")
 	flag.BoolVar(&enableDnsCache, "enable-dns-cache", false, "enable local dns cache if specified")
+
+	var directAddr string
+	flag.StringVar(&directAddr, "direct", "10.168.0.57", "direct addr")
 	flag.Parse()
+
+	directAddrs := strings.Split(directAddr, ",")
 
 	dnsServers := strings.Split(tunDNS, ",")
 	f, e := tun.OpenTunDevice(tunDevice, tunAddr, tunGW, tunMask, dnsServers)
@@ -53,10 +58,10 @@ func main() {
 		s := <-ch
 		switch s {
 		default:
-			DeleteRoutes("10.168.0.57", tunGW)
+			DeleteRoutes(directAddrs, tunGW)
 			tun.Stop()
 		}
 	}()
-	AddRoutes("10.168.0.57", tunGW)
+	AddRoutes(directAddrs, tunGW)
 	tun.Run()
 }

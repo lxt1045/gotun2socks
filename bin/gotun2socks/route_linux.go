@@ -7,7 +7,7 @@ import (
 )
 
 // AddRoutes adds routes.
-func AddRoutes(proxyIP, gwNew string) error {
+func AddRoutes(proxyIPs []string, gwNew string) error {
 	c := exec.Command("ip", "route", "add", "0.0.0.0/1", "via", gwNew)
 	if out, err := c.CombinedOutput(); err != nil {
 		return errors.New(string(out) + err.Error())
@@ -20,15 +20,17 @@ func AddRoutes(proxyIP, gwNew string) error {
 	if err != nil {
 		return err
 	}
-	c = exec.Command("ip", "route", "add", proxyIP, "via", gw)
-	if out, err := c.CombinedOutput(); err != nil {
-		return errors.New(string(out) + err.Error())
+	for _, proxyIP := range proxyIPs {
+		c = exec.Command("ip", "route", "add", proxyIP, "via", gw)
+		if out, err := c.CombinedOutput(); err != nil {
+			return errors.New(string(out) + err.Error())
+		}
 	}
 	return nil
 }
 
 // DeleteRoutes deletes routes.
-func DeleteRoutes(proxyIP, gwNew string) error {
+func DeleteRoutes(proxyIPs []string, gwNew string) error {
 	c := exec.Command("ip", "route", "del", "0.0.0.0/1", "via", gwNew)
 	if out, err := c.CombinedOutput(); err != nil {
 		return errors.New(string(out) + err.Error())
@@ -41,9 +43,11 @@ func DeleteRoutes(proxyIP, gwNew string) error {
 	if err != nil {
 		return err
 	}
-	c = exec.Command("ip", "route", "del", proxyIP, "via", gw)
-	if out, err := c.CombinedOutput(); err != nil {
-		return errors.New(string(out) + err.Error())
+	for _, proxyIP := range proxyIPs {
+		c = exec.Command("ip", "route", "del", proxyIP, "via", gw)
+		if out, err := c.CombinedOutput(); err != nil {
+			return errors.New(string(out) + err.Error())
+		}
 	}
 	return nil
 }
