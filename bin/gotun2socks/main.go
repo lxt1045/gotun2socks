@@ -8,12 +8,12 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/yinghuocho/gotun2socks"
-	"github.com/yinghuocho/gotun2socks/tun"
+	"github.com/lxt1045/gotun2socks"
+	"github.com/lxt1045/gotun2socks/tun"
 )
 
 /*
- route add 0.0.0.0 mask 128.0.0.0 10.0.0.1  лМ╪сд╛хоб╥си
+ route add 0.0.0.0 mask 128.0.0.0 10.0.0.1  О©╫О©╫О©╫О©╫д╛О©╫О©╫б╥О©╫О©╫
  route add 128.0.0.0 mask 128.0.0.0 10.0.0.1
 */
 
