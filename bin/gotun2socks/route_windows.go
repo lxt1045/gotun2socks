@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"os/exec"
 	"strings"
 	"syscall"
@@ -29,12 +30,25 @@ func AddRoutes(proxyIPs []string, gwNew string) error {
 		return err
 	}
 	for _, proxyIP := range proxyIPs {
-		c = exec.Command("route", "add", proxyIP, "mask", "255.255.255.255", gw, "metric", "1")
+		proxyIP, mask := ParseIP(proxyIP)
+		fmt.Printf("route add %s mask %s %s metric 1\n", proxyIP, mask, gw)
+
+		c = exec.Command("route", "add", proxyIP, "mask", mask, gw, "metric", "1")
 		if out, err := c.CombinedOutput(); err != nil {
 			return errors.New(string(out) + err.Error())
 		}
 	}
 	return nil
+}
+
+func ParseIP(proxyIP string) (ip, mask string) {
+	maskS := []string{"255", "255", "255", "255"}
+	for nStar := strings.Count(proxyIP, "*"); nStar > 0; nStar-- {
+		maskS[len(maskS)-nStar] = "0"
+	}
+	mask = strings.Join(maskS, ".")
+	ip = strings.Replace(proxyIP, "*", "0", -1)
+	return
 }
 
 // DeleteRoutes deletes routes.
@@ -60,7 +74,9 @@ func DeleteRoutes(proxyIPs []string, gwNew string) error {
 	}
 
 	for _, proxyIP := range proxyIPs {
-		c = exec.Command("route", "delete", proxyIP, "mask", "255.255.255.255", gw, "metric", "1")
+		proxyIP, mask := ParseIP(proxyIP)
+		fmt.Printf("route add %s mask %s %s metric 1\n", proxyIP, mask, gw)
+		c = exec.Command("route", "delete", proxyIP, "mask", mask, gw, "metric", "1")
 		if out, err := c.CombinedOutput(); err != nil {
 			return errors.New(string(out) + err.Error())
 		}

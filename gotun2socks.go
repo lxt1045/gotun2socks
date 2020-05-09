@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/yinghuocho/gosocks"
 	"github.com/lxt1045/gotun2socks/internal/packet"
+	"github.com/yinghuocho/gosocks"
 )
 
 const (
@@ -36,6 +36,7 @@ type Tun2Socks struct {
 
 	tcpConnTrackLock sync.Mutex
 	tcpConnTrackMap  map[string]*tcpConnTrack
+	//tcpConnTrackMap map[string]*ssConnTrack
 
 	udpConnTrackLock sync.Mutex
 	udpConnTrackMap  map[string]*udpConnTrack
